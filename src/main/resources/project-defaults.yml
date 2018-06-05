@@ -1,0 +1,37 @@
+swarm:
+  transactions:
+    node-identifier: "wfsjaxws"
+  logging:
+    loggers:
+      # Disable warning that there are no JAX-RS resources.
+      org.jboss.as.jaxrs:
+        level: ERROR
+      # Remove deployment warnings that are caused by Java 8 not yet supporting module-info.
+      org.jboss.as.server.deployment:
+        level: ERROR
+      # Remove warnings for private dependencies, they are not relevant as they are packaged into one large JAR.
+      org.jboss.as.dependency.private:
+        level: ERROR
+  bind:
+    address: localhost
+  microprofile:
+    jwt:
+      token:
+        issued-by: "jwt"
+        signer-pub-key: "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAkchpeWdMsvOl9c0OdhkfCSq1wfZ5HcuCCY30LWxuL9WTmlmp76v9xnMA5mRol5d7g9ECw+hvuFrHzxOZ1aLa/Jr2trfTKQUk3b7SLoES7yND9p80diyx3r4zorjm250gevuc/XRFm+0kgDe40VXZnzVfPsJCi9irB+OIpiflbpKvlAnLqRSAyN89yY4HuJfZZ+8HX7OW7d0lSyUO4F25mslK4DH2Dc4jLjqE+K4Nf/tXFi6Z3of529fg65GETI7UCt0Dj3diOFob06Uarm17UKdGCnJDNWLfyTMyyKf+cHx6RPMyuSBqtF0lqVXxIReAxEL8Ic5ozQKsiCJYhehrowIDAQAB"
+  security:
+    security-domains:
+      jwt-realm:
+        jaspi-authentication:
+          login-module-stacks:
+            roles-lm-stack:
+              login-modules:
+                - login-module: rm
+                  code: org.wildfly.swarm.microprofile.jwtauth.deployment.auth.jaas.JWTLoginModule
+                  flag: required
+          auth-modules:
+            http:
+              code: org.wildfly.extension.undertow.security.jaspi.modules.HTTPSchemeServerAuthModule
+              module: org.wildfly.extension.undertow
+              flag: required
+              login-module-stack-ref: roles-lm-stack
